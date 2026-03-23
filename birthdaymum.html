@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TO MY MUMMY 🎂</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  FIREBASE SETUP — 5 minutes, completely free        ║
+       ║                                                      ║
+       ║  1. Go to https://console.firebase.google.com       ║
+       ║  2. "Add project" → name it → Create                ║
+       ║  3. Left panel: Build → Realtime Database           ║
+       ║     → Create database → TEST MODE → Enable          ║
+       ║  4. Gear ⚙️ → Project settings → Your apps → </>   ║
+       ║     → Register → copy the config values below       ║
+       ║  5. Replace every YOUR_... with your real values    ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    // ← PASTE YOUR FIREBASE CONFIG HERE ↓
+    const firebaseConfig = {
+      apiKey:            "YOUR_API_KEY",
+      authDomain:        "YOUR_PROJECT.firebaseapp.com",
+      databaseURL:       "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId:         "YOUR_PROJECT_ID",
+      storageBucket:     "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId:             "YOUR_APP_ID"
+    };
+
+    const app       = initializeApp(firebaseConfig);
+    const db        = getDatabase(app);
+    const wishesRef = ref(db, 'wishes');
+
+    // ── REAL-TIME: wall updates live for ALL visitors ──
+    onValue(wishesRef, (snapshot) => {
+      const wall    = document.getElementById('wishes-wall');
+      const loading = document.getElementById('wishes-loading');
+      if (loading) loading.remove();
+      wall.innerHTML = '';
+
+      const data = snapshot.val();
+      if (!data) {
+        wall.innerHTML = `<p style="text-align:center;color:var(--rust);font-style:italic;
+          grid-column:1/-1;opacity:0.7;padding:2rem 0;">Be the first to leave a wish ♡</p>`;
+        return;
+      }
+
+      Object.entries(data)
+        .sort(([,a],[,b]) => (b.timestamp||0) - (a.timestamp||0))
+        .forEach(([, w]) => {
+          const card = document.createElement('div');
+          card.className = 'wish-card';
+          card.innerHTML = `
+            <div class="wish-quote">"</div>
+            <p class="wish-text">${w.text}</p>
+            <p class="wish-name">— ${w.name}</p>`;
+          wall.appendChild(card);
+        });
+    });
+
+    // ── SUBMIT to Firebase ──
+    window._fbSubmit = function() {
+      const nameEl = document.getElementById('wish-name');
+      const textEl = document.getElementById('wish-text');
+      const name   = nameEl.value.trim();
+      const text   = textEl.value.trim();
+      if (!name || !text) { alert('Please fill in both fields ♡'); return; }
+
+      const btn = document.querySelector('.btn-submit');
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      push(wishesRef, { name, text, timestamp: Date.now() })
+        .then(() => {
+          nameEl.value = '';
+          textEl.value = '';
+          btn.textContent = 'Wish sent! ✓';
+          btn.style.background = '#5c3317';
+          setTimeout(() => {
+            btn.textContent = 'Send your wish ♡';
+            btn.style.background = '';
+            btn.disabled = false;
+          }, 3000);
+          if (window._burst) window._burst();
+        })
+        .catch(err => {
+          console.error(err);
+          btn.textContent = 'Try again ♡';
+          btn.disabled = false;
+          alert('Check your Firebase config — see the code comments for setup steps.');
+        });
+    };
+  </script>
+
+  <style>
+    :root {
+      --cream: #fdf6ec;
+      --warm:  #f5e6d0;
+      --amber: #c8852a;
+      --rust:  #a0522d;
+      --brown: #5c3317;
+      --blush: #e8c4a0;
+      --gold:  #d4a853;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lora', serif; background-color: var(--cream); color: var(--brown); overflow-x: hidden; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+    /* grain */
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.4;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+
+    #confetti-canvas { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:100; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(160deg, #fdf0dc 0%, #f5e0c0 50%, #ede0d0 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem; position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 80px;
+      background: var(--cream); clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-badge {
+      display: inline-block; border: 2px solid var(--amber); color: var(--amber);
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.4rem 1.2rem; border-radius: 999px; margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease forwards; opacity: 0;
+    }
+    .hero-title { font-size: clamp(3rem,10vw,7rem); line-height:1.05; color:var(--brown); animation: fadeUp 0.8s 0.2s ease forwards; opacity:0; }
+    .hero-title em { color: var(--amber); font-style: italic; }
+    .hero-subtitle { font-size: clamp(1rem,2.5vw,1.4rem); color:var(--rust); margin-top:1rem; font-style:italic; animation: fadeUp 0.8s 0.4s ease forwards; opacity:0; }
+    .hero-date { margin-top:2rem; font-size:0.85rem; letter-spacing:0.15em; color:var(--amber); text-transform:uppercase; animation: fadeUp 0.8s 0.6s ease forwards; opacity:0; }
+
+    .petal { position:absolute; width:12px; height:12px; border-radius:50% 0 50% 0; opacity:0.25; animation: drift linear infinite; }
+    @keyframes drift { 0%{transform:translateY(-20px) rotate(0deg);opacity:0} 10%{opacity:.3} 90%{opacity:.2} 100%{transform:translateY(110vh) rotate(360deg);opacity:0} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* COUNTDOWN */
+    .countdown-section { background:var(--brown); padding:4rem 2rem; text-align:center; color:var(--cream); }
+    .countdown-label { font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+    .countdown-title { font-size:clamp(1.5rem,4vw,2.5rem); margin-bottom:2.5rem; color:var(--cream); }
+    .countdown-grid { display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; }
+    .countdown-box { background:rgba(255,255,255,.07); border:1px solid rgba(212,168,83,.3); border-radius:16px; padding:1.5rem 2rem; min-width:90px; }
+    .countdown-num { font-family:'Playfair Display',serif; font-size:clamp(2.5rem,6vw,4rem); color:var(--gold); line-height:1; }
+    .countdown-unit { font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--blush); margin-top:0.4rem; }
+
+    /* COMMON */
+    .section { padding:5rem 1.5rem; max-width:1100px; margin:0 auto; }
+    .section-label { font-size:0.7rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--amber); margin-bottom:0.5rem; }
+    .section-title { font-size:clamp(2rem,5vw,3.2rem); color:var(--brown); margin-bottom:3rem; }
+    .divider { width:60px; height:2px; background:var(--amber); margin:1rem 0 3rem; }
+
+    /* GALLERY */
+    .gallery-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:1.25rem; }
+    .gallery-card { border-radius:16px; overflow:hidden; position:relative; aspect-ratio:3/4; background:var(--warm); cursor:pointer; transition:transform .3s,box-shadow .3s; }
+    .gallery-card:hover { transform:translateY(-6px) rotate(0.5deg); box-shadow:0 20px 40px rgba(92,51,23,.18); }
+    .gallery-card img { width:100%; height:100%; object-fit:cover; filter:sepia(15%) saturate(90%); transition:filter .3s; }
+    .gallery-card:hover img { filter:sepia(0%) saturate(100%); }
+    .gallery-card .caption { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(92,51,23,.85)); color:var(--cream); padding:2rem 1rem 1rem; font-size:.85rem; font-style:italic; transform:translateY(100%); transition:transform .3s; }
+    .gallery-card:hover .caption { transform:translateY(0); }
+    .img-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--rust); font-size:.8rem; font-style:italic; }
+    .img-placeholder span { font-size:2rem; }
+
+    /* TIMELINE */
+    .timeline-bg { background:linear-gradient(180deg,var(--cream) 0%,var(--warm) 100%); padding:5rem 1.5rem; }
+    .timeline { position:relative; max-width:700px; margin:0 auto; }
+    .timeline::before { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(var(--amber),var(--blush)); transform:translateX(-50%); }
+    .tl-item { display:flex; gap:2rem; margin-bottom:3rem; position:relative; align-items:flex-start; }
+    .tl-item:nth-child(odd) { flex-direction:row; }
+    .tl-item:nth-child(even) { flex-direction:row-reverse; }
+    .tl-content { flex:1; background:white; border-radius:16px; padding:1.25rem 1.5rem; box-shadow:0 4px 20px rgba(92,51,23,.08); border:1px solid rgba(200,133,42,.15); }
+    .tl-year { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--amber); margin-bottom:.25rem; }
+    .tl-text { font-size:.95rem; color:var(--brown); line-height:1.6; }
+    .tl-dot { position:absolute; left:50%; top:1.2rem; transform:translateX(-50%); width:14px; height:14px; border-radius:50%; background:var(--amber); border:3px solid var(--cream); box-shadow:0 0 0 3px var(--amber); z-index:1; }
+    .tl-spacer { flex:1; }
+    @media(max-width:600px) {
+      .timeline::before{left:16px}
+      .tl-item,.tl-item:nth-child(even){flex-direction:column;padding-left:40px}
+      .tl-dot{left:16px}
+      .tl-spacer{display:none}
+    }
+
+    /* LOVE LIST */
+    .love-section { background:var(--brown); padding:5rem 1.5rem; }
+    .love-section .section-title { color:var(--cream); }
+    .love-section .section-label { color:var(--gold); }
+    .love-section .divider { background:var(--gold); }
+    .love-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; max-width:1000px; margin:0 auto; }
+    .love-card { background:rgba(255,255,255,.07); border:1px solid rgba(212,168,83,.2); border-radius:16px; padding:1.5rem; transition:background .3s,transform .3s; }
+    .love-card:hover { background:rgba(255,255,255,.12); transform:translateY(-4px); }
+    .love-num { font-family:'Playfair Display',serif; font-size:2.5rem; color:var(--gold); opacity:.5; line-height:1; margin-bottom:.5rem; }
+    .love-text { font-size:1rem; color:var(--cream); line-height:1.5; }
+
+    /* WISHES */
+    .wishes-section { padding:5rem 1.5rem; }
+    .wishes-form { background:white; border-radius:20px; padding:2rem; box-shadow:0 8px 32px rgba(92,51,23,.1); border:1px solid rgba(200,133,42,.15); max-width:600px; margin:0 auto 3rem; }
+    .wishes-form input, .wishes-form textarea { width:100%; padding:.85rem 1rem; border:1.5px solid var(--blush); border-radius:10px; font-family:'Lora',serif; font-size:.95rem; color:var(--brown); background:var(--cream); outline:none; transition:border-color .2s; margin-bottom:1rem; }
+    .wishes-form input:focus, .wishes-form textarea:focus { border-color:var(--amber); }
+    .wishes-form textarea { resize:vertical; min-height:100px; }
+    .btn-submit { background:var(--amber); color:white; border:none; padding:.85rem 2.5rem; border-radius:999px; font-family:'Lora',serif; font-size:1rem; cursor:pointer; transition:background .2s,transform .2s; }
+    .btn-submit:hover { background:var(--rust); transform:translateY(-2px); }
+    .wishes-wall { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.25rem; max-width:1100px; margin:0 auto; }
+    .wish-card { background:white; border-radius:16px; padding:1.5rem; box-shadow:0 4px 16px rgba(92,51,23,.07); border:1px solid rgba(200,133,42,.12); animation:fadeUp .5s ease forwards; }
+    .wish-quote { font-size:3rem; color:var(--blush); line-height:.5; font-family:'Playfair Display',serif; margin-bottom:.5rem; }
+    .wish-text { font-size:.95rem; color:var(--brown); line-height:1.6; font-style:italic; }
+    .wish-name { margin-top:1rem; font-size:.8rem; color:var(--amber); font-weight:500; letter-spacing:.05em; }
+    #wishes-loading { text-align:center; color:var(--rust); font-style:italic; grid-column:1/-1; padding:2rem; opacity:.7; }
+
+    /* FOOTER */
+    footer { background:var(--brown); text-align:center; padding:3rem 1.5rem; color:var(--blush); font-size:.9rem; font-style:italic; }
+    footer strong { color:var(--gold); font-style:normal; font-family:'Playfair Display',serif; }
+
+    /* SCROLL REVEAL */
+    .reveal { opacity:0; transform:translateY(30px); transition:opacity .7s,transform .7s; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* PASSWORD GATE */
+    #gate-overlay {
+      position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center;
+      padding:1.5rem; background:rgba(92,51,23,.55); backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px); animation:gateFadeIn .6s ease forwards;
+    }
+    @keyframes gateFadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes gateOut { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(1.04)} }
+    #gate-overlay.closing { animation:gateOut .5s ease forwards; }
+    .gate-card {
+      background:linear-gradient(145deg,#fdf6ec,#f5e6d0); border-radius:28px; padding:3rem 2.5rem;
+      max-width:420px; width:100%; text-align:center;
+      box-shadow:0 32px 80px rgba(92,51,23,.35),0 0 0 1px rgba(212,168,83,.25),inset 0 1px 0 rgba(255,255,255,.8);
+      animation:cardPop .5s .15s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes cardPop { from{opacity:0;transform:translateY(24px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+    .gate-icon { font-size:3rem; margin-bottom:.75rem; display:block; }
+    .gate-title { font-size:2rem; color:var(--brown); margin-bottom:.4rem; }
+    .gate-subtitle { font-size:.95rem; color:var(--rust); font-style:italic; margin-bottom:2rem; line-height:1.5; }
+    .gate-input-wrap { position:relative; margin-bottom:1rem; }
+    #gate-input {
+      width:100%; padding:1rem 3rem 1rem 1.25rem; border:2px solid var(--blush); border-radius:14px;
+      font-family:'Lora',serif; font-size:1.05rem; color:var(--brown); background:white;
+      outline:none; text-align:center; letter-spacing:.15em; transition:border-color .25s,box-shadow .25s;
+    }
+    #gate-input:focus { border-color:var(--amber); box-shadow:0 0 0 4px rgba(200,133,42,.12); }
+    #gate-input.error { border-color:#c0392b; animation:shake .4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+    .gate-toggle { position:absolute; right:1rem; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.1rem; color:var(--rust); opacity:.6; transition:opacity .2s; }
+    .gate-toggle:hover { opacity:1; }
+    .gate-hint { font-size:.78rem; color:var(--amber); margin-bottom:1.5rem; font-style:italic; }
+    .gate-error-msg { font-size:.85rem; color:#c0392b; margin-bottom:.75rem; min-height:1.2em; font-style:italic; }
+    .btn-gate { width:100%; background:var(--brown); color:var(--cream); border:none; padding:1rem; border-radius:14px; font-family:'Playfair Display',serif; font-size:1.05rem; cursor:pointer; letter-spacing:.05em; transition:background .2s,transform .15s; }
+    .btn-gate:hover { background:var(--amber); transform:translateY(-2px); }
+    .gate-decor { margin-top:1.75rem; font-size:.75rem; color:var(--amber); letter-spacing:.15em; opacity:.7; }
+    #site-content { transition:filter .5s; }
+    body.locked #site-content { filter:blur(4px); pointer-events:none; user-select:none; }
+  </style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate-overlay">
+  <div class="gate-card">
+    <span class="gate-icon">🎂</span>
+    <h2 class="gate-title">A Special Place</h2>
+    <p class="gate-subtitle">This page was made with love.<br/>Enter the password to step inside.</p>
+    <div class="gate-input-wrap">
+      <input type="password" id="gate-input" placeholder="Enter password…"
+        onkeydown="if(event.key==='Enter') tryUnlock()" autocomplete="off"/>
+      <button class="gate-toggle" onclick="toggleGateVisibility()" id="gate-eye">👁</button>
+    </div>
+    <p class="gate-hint">Hint: the developer's name 😂</p>
+    <p class="gate-error-msg" id="gate-error"></p>
+    <button class="btn-gate" onclick="tryUnlock()">Enter ♡</button>
+    <p class="gate-decor">✦ &nbsp; Family only &nbsp; ✦</p>
+  </div>
+</div>
+
+<!-- SITE CONTENT -->
+<div id="site-content">
+<canvas id="confetti-canvas"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <div id="petals"></div>
+  <p class="hero-badge">✦ A Celebration ✦</p>
+  <h1 class="hero-title">Happy <em>XXXXXth</em><br/>Birthday, Mum</h1>
+  <p class="hero-subtitle">XXXXX years of love, strength &amp; grace</p>
+  <p class="hero-date">♡ Celebrate with her ♡</p>
+</section>
+
+<!-- COUNTDOWN -->
+<section class="countdown-section">
+  <p class="countdown-label">⏳ Age Counter</p>
+  <h2 class="countdown-title">She's been making the world brighter for…</h2>
+  <div class="countdown-grid">
+    <div class="countdown-box"><div class="countdown-num" id="c-years">xx</div><div class="countdown-unit">Years</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="c-months">xx</div><div class="countdown-unit">Months</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="c-days">xx</div><div class="countdown-unit">Days</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="c-hours">xx</div><div class="countdown-unit">Hours</div></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div style="background:var(--cream);padding:5rem 1.5rem;">
+  <div class="section" style="padding:0;">
+    <p class="section-label reveal">📸 Throwbacks &amp; Memories</p>
+    <h2 class="section-title reveal">A Life in Pictures</h2>
+    <div class="divider reveal"></div>
+    <div class="gallery-grid reveal">
+      <div class="gallery-card"><img src="media/mum1.jpg">Add your photo here</img><div class="caption">The early days</div></div>
+      <div class="gallery-card"><img src="media/mum2.jpg">Add your photo here</img><div class="caption"></div></div>
+      <div class="gallery-card"><img src="media/mum3.jpg">Add your photo here</img><div class="caption">Family moments</div></div>
+      <div class="gallery-card"><img src="media/mum4.jpg">Add your photo here</i><div class="caption">Celebrations together</div></div>
+      <div class="gallery-card"><img src="media/mum5.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum6.jpg">Add your photo here</img><div class="caption">Always smiling</div></div>
+      <div class="gallery-card"><img src="media/mum7.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum8.jpg">Add your photo here</i><div class="caption">Always smiling</div></div>
+      <div class="gallery-card"><img src="media/mum9.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum10.jpg">Add your photo here</img><div class="caption">Always smiling</div></div>
+      <div class="gallery-card"><img src="media/mum11.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum12.jpg">Add your photo here</i><div class="caption">Always smiling</div></div>
+      <div class="gallery-card"><img src="media/mum13.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum14.jpg">Add your photo here</img><div class="caption">Always smiling</div></div>
+      <div class="gallery-card"><img src="media/mum15.jpg">Add your photo here</i><div class="caption">Summer memories</div></div>
+      <div class="gallery-card"><img src="media/mum16.jpg">Add your photo here</i><div class="caption">Always smiling</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-bg">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-label reveal">📅 Her Journey</p>
+    <h2 class="section-title reveal">Milestones &amp; Memories</h2>
+    <div class="divider reveal"></div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-content"><div class="tl-year">1900</div><div class="tl-text">Born into the world and stole everyone's heart from day one. 🌸</div></div>
+        <div class="tl-dot"></div><div class="tl-spacer"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-spacer"></div><div class="tl-dot"></div>
+        <div class="tl-content"><div class="tl-year">1995</div><div class="tl-text">Graduated and stepped boldly into adulthood. The world wasn't ready. 🎓</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><div class="tl-year">2000s</div><div class="tl-text">Built a home, a family, and a legacy filled with warmth and laughter. 🏡</div></div>
+        <div class="tl-dot"></div><div class="tl-spacer"></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-spacer"></div><div class="tl-dot"></div>
+        <div class="tl-content"><div class="tl-year">2010s</div><div class="tl-text">Watched her children grow, never missing a single moment that mattered. 💛</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-content"><div class="tl-year">Today</div><div class="tl-text">Still as radiant, loving, and unstoppable as ever. Happy 48th! 🎂</div></div>
+        <div class="tl-dot"></div><div class="tl-spacer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOVE LIST -->
+<div class="love-section">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;">
+    <p class="section-label reveal">✨ Things We Adore About Her</p>
+    <h2 class="section-title reveal">48 Reasons We Love You</h2>
+    <div class="divider reveal" style="margin:1rem auto 3rem;"></div>
+    <div class="love-grid reveal" id="love-grid"></div>
+  </div>
+</div>
+
+<!-- WISHES WALL -->
+<div class="wishes-section">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="section-label reveal" style="text-align:center;">💌 Leave a Message</p>
+    <h2 class="section-title reveal" style="text-align:center;">Birthday Wishes Wall</h2>
+    <div class="divider reveal" style="margin:1rem auto 3rem;"></div>
+    <div class="wishes-form reveal">
+      <input type="text" id="wish-name" placeholder="Your name"/>
+      <textarea id="wish-text" placeholder="Write your birthday wish here…"></textarea>
+      <button class="btn-submit" onclick="window._fbSubmit()">Send your wish ♡</button>
+    </div>
+    <div class="wishes-wall" id="wishes-wall">
+      <p id="wishes-loading">Loading wishes… 🌸</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Made with <strong>♡</strong> for my mum who deserves the world.</p>
+  <p style="margin-top:.5rem;font-size:.75rem;;">Happy 48th Birthday</p>
+  <p style="margin-top: .5rem;font-size:1rem;">From your son <b>TEMITOPE ADEGOKE</b></p>
+</footer>
+</div><!-- end #site-content -->
+
+<script>
+  /* PETALS */
+  const petalColors = ['#c8852a','#e8c4a0','#a0522d','#d4a853','#f5e6d0'];
+  const petalContainer = document.getElementById('petals');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;background:${petalColors[Math.floor(Math.random()*petalColors.length)]};animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*8}s;width:${8+Math.random()*10}px;height:${8+Math.random()*10}px;`;
+    petalContainer.appendChild(p);
+  }
+
+  /* CONFETTI */
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+  const confettiColors = ['#c8852a','#d4a853','#e8c4a0','#a0522d','#f5e6d0','#5c3317'];
+  let pieces = [];
+  let animating = true;
+
+  function spawnConfetti(n=120) {
+    for (let i=0;i<n;i++) pieces.push({
+      x:Math.random()*canvas.width, y:-10-Math.random()*200, r:4+Math.random()*6,
+      color:confettiColors[Math.floor(Math.random()*confettiColors.length)],
+      vy:2+Math.random()*3, vx:(Math.random()-.5)*2,
+      angle:Math.random()*Math.PI*2, spin:(Math.random()-.5)*.15,
+      shape:Math.random()>.5?'rect':'circle'
+    });
+  }
+  window._spawnConfetti = spawnConfetti;
+
+  function drawConfetti() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p => {
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.angle);
+      ctx.fillStyle=p.color; ctx.globalAlpha=.85;
+      if(p.shape==='rect') ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+      else { ctx.beginPath(); ctx.arc(0,0,p.r/2,0,Math.PI*2); ctx.fill(); }
+      ctx.restore();
+      p.x+=p.vx; p.y+=p.vy; p.angle+=p.spin; p.vy+=.03;
+    });
+    pieces=pieces.filter(p=>p.y<canvas.height+20);
+    if(animating) requestAnimationFrame(drawConfetti);
+  }
+  window._drawConfetti = drawConfetti;
+
+  // confetti burst helper for Firebase module
+  window._burst = function() {
+    animating=true; spawnConfetti(60); drawConfetti();
+    setTimeout(()=>{animating=false;},3000);
+  };
+
+  spawnConfetti(); drawConfetti();
+  setTimeout(()=>{animating=false;},5000);
+
+  /* COUNTDOWN */
+  const birthday = new Date(1978,2,29); // ← update: YYYY, month(0-indexed), day
+  function updateAge() {
+    const now=new Date(), diffMs=now-birthday;
+    const totalDays=Math.floor(diffMs/(1000*60*60*24));
+    const years=Math.floor(totalDays/365.25);
+    const rem=totalDays-Math.floor(years*365.25);
+    const months=Math.floor(rem/30.44);
+    const days=Math.floor(rem%30.44);
+    document.getElementById('c-years').textContent=years;
+    document.getElementById('c-months').textContent=months;
+    document.getElementById('c-days').textContent=days;
+    document.getElementById('c-hours').textContent=new Date().getHours();
+  }
+  // updateAge(); setInterval(updateAge,60000);
+
+  /* LOVE LIST */
+  const loves=[
+    "Your laugh that fills every room","The way you make everyone feel at home",
+    "Your strength on the hardest days","How you always know what to say",
+    "Your cooking that tastes like love","The way you never give up",
+    "Your gentle, patient heart","How you celebrate everyone's wins",
+    "Your wisdom wrapped in kindness","The warmth you carry everywhere",
+    "How hard you've worked for us","Your beautiful, contagious smile",
+    "The way you hold the family together","Your creativity and imagination",
+    "How you make ordinary moments special","Your grace under pressure",
+    "The stories you tell so vividly","Your unconditional love",
+    "How you always show up","The way you see the best in people",
+    "Your courage through every storm","How you make us feel truly seen",
+    "Your dedication to what matters","The way you light up a room",
+    "How you make us proud every day","Your kindness to complete strangers",
+    "The hugs that fix everything","Your sense of adventure",
+    "How you never stop growing","The way you love with your whole heart",
+    "Your quiet sacrifices nobody sees","How you still make us laugh",
+    "Your faith that moves mountains","The life you've built for us",
+    "How you make home feel safe","Your resilience and fire",
+    "The pride in your eyes when we succeed","How you remember the little things",
+    "Your prayers that cover us","How you've shaped who we are",
+    "Your infectious positivity","The little notes you leave",
+    "How you never run out of love","Your style and elegance",
+    "The lessons you taught by example","How you carry joy so naturally",
+    "Your voice — our favorite sound","Simply: being YOU ♡"
+  ];
+  const grid=document.getElementById('love-grid');
+  loves.forEach((text,i)=>{
+    const card=document.createElement('div');
+    card.className='love-card';
+    card.innerHTML=`<div class="love-num">${String(i+1).padStart(2,'0')}</div><div class="love-text">${text}</div>`;
+    grid.appendChild(card);
+  });
+
+  /* PASSWORD GATE */
+  // ← Change this to your chosen password
+  const SITE_PASSWORD = 'TEMITOPE';
+
+  if(sessionStorage.getItem('birthday_unlocked')==='yes') {
+    document.getElementById('gate-overlay').style.display='none';
+  } else {
+    document.body.classList.add('locked');
+  }
+
+  function tryUnlock() {
+    const val=document.getElementById('gate-input').value.trim();
+    const errEl=document.getElementById('gate-error');
+    const input=document.getElementById('gate-input');
+    if(val===SITE_PASSWORD) {
+      errEl.textContent='';
+      sessionStorage.setItem('birthday_unlocked','yes');
+      const overlay=document.getElementById('gate-overlay');
+      overlay.classList.add('closing');
+      document.body.classList.remove('locked');
+      overlay.addEventListener('animationend',()=>overlay.remove(),{once:true});
+      animating=true; spawnConfetti(150); drawConfetti();
+      setTimeout(()=>{animating=false;},5000);
+    } else {
+      input.classList.add('error');
+      errEl.textContent='Incorrect password — try again 🌸';
+      input.value='';
+      setTimeout(()=>input.classList.remove('error'),500);
+    }
+  }
+
+  function toggleGateVisibility() {
+    const input=document.getElementById('gate-input');
+    const eye=document.getElementById('gate-eye');
+    input.type=input.type==='password'?'text':'password';
+    eye.textContent=input.type==='password'?'👁':'🙈';
+  }
+
+  /* SCROLL REVEAL */
+  const reveals=document.querySelectorAll('.reveal');
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+  },{threshold:.1});
+  reveals.forEach(r=>observer.observe(r));
+</script>
+</body>
+</html>
