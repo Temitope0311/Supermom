@@ -289,7 +289,7 @@
         onkeydown="if(event.key==='Enter') tryUnlock()" autocomplete="off"/>
       <button class="gate-toggle" onclick="toggleGateVisibility()" id="gate-eye">👁</button>
     </div>
-    <p class="gate-hint">Family Surname in Caps</p>
+    <p class="gate-hint">Family Surname</p>
     <p class="gate-error-msg" id="gate-error"></p>
     <button class="btn-gate" onclick="tryUnlock()">Enter ♡</button>
     <p class="gate-decor">✦ &nbsp; Family and friends &nbsp; ✦</p>
@@ -304,8 +304,8 @@
 <section class="hero">
   <div id="petals"></div>
   <p class="hero-badge">From Temi</p>
-  <h1 class="hero-title">Happy <em>XXXXXth</em><br/>Birthday, Mum</h1>
-  <p class="hero-subtitle">XXXXX years of love, strength &amp; grace</p>
+  <h1 class="hero-title">Happy Birthday, Mum 🎉</h1>
+  <p class="hero-subtitle">So many years of love, strength &amp; grace</p>
   <p class="hero-date">♡ Celebrate with her ♡</p>
 </section>
 
@@ -314,7 +314,7 @@
   <p class="countdown-label">Years of Impact</p>
   <h2 class="countdown-title">She's been making the world brighter for…</h2>
   <div class="countdown-grid">
-    <div class="countdown-box"><div class="countdown-num" id="C-years">xx</div><div class="countdown-unit">Years</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="c-years">xx</div><div class="countdown-unit">Years</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-months">xx</div><div class="countdown-unit">Months</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-days">xx</div><div class="countdown-unit">Days</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-hours">xx</div><div class="countdown-unit">Hours</div></div>
@@ -513,7 +513,7 @@
 
   /* PASSWORD GATE */
   // ← Change this to your chosen password
-  const SITE_PASSWORD = 'ADEGOKES';
+  const PASSWORDS = ['ADEGOKES', 'ADEGOKE', 'Adegokes', 'Adegoke'];
 
   if(sessionStorage.getItem('birthday_unlocked')==='yes') {
     document.getElementById('gate-overlay').style.display='none';
@@ -525,7 +525,7 @@
     const val=document.getElementById('gate-input').value.trim();
     const errEl=document.getElementById('gate-error');
     const input=document.getElementById('gate-input');
-    if(val===SITE_PASSWORD) {
+    if (PASSWORDS.includes(val)) {
       errEl.textContent='';
       sessionStorage.setItem('birthday_unlocked','yes');
       const overlay=document.getElementById('gate-overlay');
