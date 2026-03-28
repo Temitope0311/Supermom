@@ -6,18 +6,6 @@
   <title>TO MY MUMMY 🎂</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
-
-  <!-- ╔══════════════════════════════════════════════════════╗
-       ║  FIREBASE SETUP — 5 minutes, completely free        ║
-       ║                                                      ║
-       ║  1. Go to https://console.firebase.google.com       ║
-       ║  2. "Add project" → name it → Create                ║
-       ║  3. Left panel: Build → Realtime Database           ║
-       ║     → Create database → TEST MODE → Enable          ║
-       ║  4. Gear ⚙️ → Project settings → Your apps → </>   ║
-       ║     → Register → copy the config values below       ║
-       ║  5. Replace every YOUR_... with your real values    ║
-       ╚══════════════════════════════════════════════════════╝ -->
   <script type="module">
     import { initializeApp }
       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -295,16 +283,16 @@
   <div class="gate-card">
     <span class="gate-icon">🎂</span>
     <h2 class="gate-title">A Special Place</h2>
-    <p class="gate-subtitle">This page was made with love.<br/>Enter the password to step inside.</p>
+    <p class="gate-subtitle">This site was made with love♥️.<br/>Enter the password to step inside.</p>
     <div class="gate-input-wrap">
       <input type="password" id="gate-input" placeholder="Enter password…"
         onkeydown="if(event.key==='Enter') tryUnlock()" autocomplete="off"/>
       <button class="gate-toggle" onclick="toggleGateVisibility()" id="gate-eye">👁</button>
     </div>
-    <p class="gate-hint">Hint: the developer's name (in caps)😂</p>
+    <p class="gate-hint">Family Surname in Caps</p>
     <p class="gate-error-msg" id="gate-error"></p>
     <button class="btn-gate" onclick="tryUnlock()">Enter ♡</button>
-    <p class="gate-decor">✦ &nbsp; Family only &nbsp; ✦</p>
+    <p class="gate-decor">✦ &nbsp; Family and friends &nbsp; ✦</p>
   </div>
 </div>
 
@@ -315,7 +303,7 @@
 <!-- HERO -->
 <section class="hero">
   <div id="petals"></div>
-  <p class="hero-badge">✦ A Celebration ✦</p>
+  <p class="hero-badge">From Temi</p>
   <h1 class="hero-title">Happy <em>XXXXXth</em><br/>Birthday, Mum</h1>
   <p class="hero-subtitle">XXXXX years of love, strength &amp; grace</p>
   <p class="hero-date">♡ Celebrate with her ♡</p>
@@ -323,10 +311,10 @@
 
 <!-- COUNTDOWN -->
 <section class="countdown-section">
-  <p class="countdown-label">⏳ Age Counter</p>
+  <p class="countdown-label">Years of Impact</p>
   <h2 class="countdown-title">She's been making the world brighter for…</h2>
   <div class="countdown-grid">
-    <div class="countdown-box"><div class="countdown-num" id="c-years">xx</div><div class="countdown-unit">Years</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="C-years">xx</div><div class="countdown-unit">Years</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-months">xx</div><div class="countdown-unit">Months</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-days">xx</div><div class="countdown-unit">Days</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-hours">xx</div><div class="countdown-unit">Hours</div></div>
@@ -368,23 +356,23 @@
     <div class="divider reveal"></div>
     <div class="timeline reveal">
       <div class="tl-item">
-        <div class="tl-content"><div class="tl-year">1900</div><div class="tl-text">Born into the world and stole everyone's heart from day one. 🌸</div></div>
+        <div class="tl-content"><div class="tl-year">Early days</div><div class="tl-text">Born into the world and stole everyone's heart from day one. 🌸</div></div>
         <div class="tl-dot"></div><div class="tl-spacer"></div>
       </div>
       <div class="tl-item">
         <div class="tl-spacer"></div><div class="tl-dot"></div>
-        <div class="tl-content"><div class="tl-year">1995</div><div class="tl-text">Graduated and stepped boldly into adulthood. The world wasn't ready. 🎓</div></div>
+        <div class="tl-content"><div class="tl-year">Growing years</div><div class="tl-text">Graduated and stepped boldly into adulthood. The world wasn't ready. 🎓</div></div>
       </div>
       <div class="tl-item">
-        <div class="tl-content"><div class="tl-year">2000s</div><div class="tl-text">Built a home, a family, and a legacy filled with warmth and laughter. 🏡</div></div>
+        <div class="tl-content"><div class="tl-year">Young Adult</div><div class="tl-text">Built a home, a family, and a legacy filled with warmth and laughter. 🏡</div></div>
         <div class="tl-dot"></div><div class="tl-spacer"></div>
       </div>
       <div class="tl-item">
         <div class="tl-spacer"></div><div class="tl-dot"></div>
-        <div class="tl-content"><div class="tl-year">2010s</div><div class="tl-text">Watched her children grow, never missing a single moment that mattered. 💛</div></div>
+        <div class="tl-content"><div class="tl-year">Mid life</div><div class="tl-text">Watched her children grow, never missing a single moment that mattered. 💛</div></div>
       </div>
       <div class="tl-item">
-        <div class="tl-content"><div class="tl-year">Today</div><div class="tl-text">Still as radiant, loving, and unstoppable as ever. Happy 48th! 🎂</div></div>
+        <div class="tl-content"><div class="tl-year">Present</div><div class="tl-text">Still as radiant, loving, and unstoppable as ever. Happy birthday 🎂</div></div>
         <div class="tl-dot"></div><div class="tl-spacer"></div>
       </div>
     </div>
@@ -394,8 +382,8 @@
 <!-- LOVE LIST -->
 <div class="love-section">
   <div style="max-width:1100px;margin:0 auto;text-align:center;">
-    <p class="section-label reveal">✨ Things We Adore About Her</p>
-    <h2 class="section-title reveal">48 Reasons We Love You</h2>
+    <p class="section-label reveal">✨Things We Adore About Her</p>
+    <h2 class="section-title reveal">Random Reasons We Love You</h2>
     <div class="divider reveal" style="margin:1rem auto 3rem;"></div>
     <div class="love-grid reveal" id="love-grid"></div>
   </div>
@@ -421,7 +409,7 @@
 <!-- FOOTER -->
 <footer>
   <p>Made with <strong>♡</strong> for my mum who deserves the world.</p>
-  <p style="margin-top:.5rem;font-size:.75rem;;">Happy xxth Birthday</p>
+  <p style="margin-top:.5rem;font-size:.85rem;;">Happy Birthday Mummy🎈🎉</p>
   <p style="margin-top: .5rem;font-size:1rem;">From your son <b>TEMITOPE ADEGOKE</b></p>
 </footer>
 </div><!-- end #site-content -->
@@ -495,34 +483,25 @@
     document.getElementById('c-days').textContent=days;
     document.getElementById('c-hours').textContent=new Date().getHours();
   }
-  // updateAge(); setInterval(updateAge,60000);
+  updateAge(); setInterval(updateAge,60000);
 
   /* LOVE LIST */
   const loves=[
-    "Your laugh that fills every room","The way you make everyone feel at home",
-    "Your strength on the hardest days","How you always know what to say",
-    "Your cooking that tastes like love","The way you never give up",
+    "Your prayers that cover us everywhere and everytime","Your laugh that fills every room",
+    "The way you make everyone feel at home","Your strength on the hardest days",
+    "How you always know what to say","Your cooking that tastes like love (thissss!!!!)",
     "Your gentle, patient heart","How you celebrate everyone's wins",
-    "Your wisdom wrapped in kindness","The warmth you carry everywhere",
-    "How hard you've worked for us","Your beautiful, contagious smile",
-    "The way you hold the family together","Your creativity and imagination",
-    "How you make ordinary moments special","Your grace under pressure",
-    "The stories you tell so vividly","Your unconditional love",
-    "How you always show up","The way you see the best in people",
+    "The warmth you carry everywhere","Your beautiful, contagious smile",
+    "The way you hold the family together","How you make ordinary moments special",
+    "Your unconditional love","How you always show up",
     "Your courage through every storm","How you make us feel truly seen",
-    "Your dedication to what matters","The way you light up a room",
-    "How you make us proud every day","Your kindness to complete strangers",
-    "The hugs that fix everything","Your sense of adventure",
-    "How you never stop growing","The way you love with your whole heart",
+    "Your kindness to complete strangers","The way you love with your whole heart",
     "Your quiet sacrifices nobody sees","How you still make us laugh",
     "Your faith that moves mountains","The life you've built for us",
-    "How you make home feel safe","Your resilience and fire",
-    "The pride in your eyes when we succeed","How you remember the little things",
-    "Your prayers that cover us","How you've shaped who we are",
-    "Your infectious positivity","The little notes you leave",
-    "How you never run out of love","Your style and elegance",
-    "The lessons you taught by example","How you carry joy so naturally",
-    "Your voice — our favorite sound","Simply: being YOU ♡"
+    "How you make home feel safe","The pride in your eyes when we succeed",
+    "How you remember the little things","How you've shaped who we are",
+    "Your style and elegance","The lessons you taught by example",
+    "Your random 'motherly' look","Simply: being YOU ♡"
   ];
   const grid=document.getElementById('love-grid');
   loves.forEach((text,i)=>{
@@ -534,7 +513,7 @@
 
   /* PASSWORD GATE */
   // ← Change this to your chosen password
-  const SITE_PASSWORD = 'TEMITOPE';
+  const SITE_PASSWORD = 'ADEGOKES';
 
   if(sessionStorage.getItem('birthday_unlocked')==='yes') {
     document.getElementById('gate-overlay').style.display='none';
