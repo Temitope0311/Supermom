@@ -310,7 +310,7 @@
 </section>
 
 <!-- COUNTDOWN -->
-<section class="countdown-section">
+<!-- <section class="countdown-section">
   <p class="countdown-label">Years of Impact</p>
   <h2 class="countdown-title">She's been making the world brighter for…</h2>
   <div class="countdown-grid">
@@ -319,7 +319,7 @@
     <div class="countdown-box"><div class="countdown-num" id="c-days">xx</div><div class="countdown-unit">Days</div></div>
     <div class="countdown-box"><div class="countdown-num" id="c-hours">xx</div><div class="countdown-unit">Hours</div></div>
   </div>
-</section>
+</section> -->
 
 <!-- GALLERY -->
 <div style="background:var(--cream);padding:5rem 1.5rem;">
@@ -470,20 +470,20 @@
   setTimeout(()=>{animating=false;},5000);
 
   /* COUNTDOWN */
-  const birthday = new Date(1978,2,29); // ← update: YYYY, month(0-indexed), day
-  function updateAge() {
-    const now=new Date(), diffMs=now-birthday;
-    const totalDays=Math.floor(diffMs/(1000*60*60*24));
-    const years=Math.floor(totalDays/365.25);
-    const rem=totalDays-Math.floor(years*365.25);
-    const months=Math.floor(rem/30.44);
-    const days=Math.floor(rem%30.44);
-    document.getElementById('c-years').textContent=years;
-    document.getElementById('c-months').textContent=months;
-    document.getElementById('c-days').textContent=days;
-    document.getElementById('c-hours').textContent=new Date().getHours();
-  }
-  updateAge(); setInterval(updateAge,60000);
+  // const birthday = new Date(1978,2,29); // ← update: YYYY, month(0-indexed), day
+  // function updateAge() {
+  //   const now=new Date(), diffMs=now-birthday;
+  //   const totalDays=Math.floor(diffMs/(1000*60*60*24));
+  //   const years=Math.floor(totalDays/365.25);
+  //   const rem=totalDays-Math.floor(years*365.25);
+  //   const months=Math.floor(rem/30.44);
+  //   const days=Math.floor(rem%30.44);
+  //   document.getElementById('c-years').textContent=years;
+  //   document.getElementById('c-months').textContent=months;
+  //   document.getElementById('c-days').textContent=days;
+  //   document.getElementById('c-hours').textContent=new Date().getHours();
+  // }
+  // updateAge(); setInterval(updateAge,60000);
 
   /* LOVE LIST */
   const loves=[
